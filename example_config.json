@@ -1,0 +1,18 @@
+{
+    "controller": {"port": 8080}
+    "proxies": [
+        {"name": "proxy-1",
+         "setup_command": "setup-script.sh"
+         "command": "python /home/vagrant/proctor-api/scripts/run-server.py 8080"
+         "tear_down_command": "tear-down-script.sh"
+         "proxy-port": 8101
+         "middleware": ["slow-loris"]
+         "status": "start"},
+        {"name": "proxy-2",
+         "command": "java -jar /home/vagrant/rate-queue/bin/ratequeue.jar server config.yml"
+         "proxy-port": 8106
+         "status": "stop"},
+        {"name": "proxy-3",
+         "command": "python /home/vagrant/proctor-testing-api/scripts/run-server.py 8081"
+         "proxy-port": 8102}]
+}
