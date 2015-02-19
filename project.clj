@@ -15,10 +15,11 @@
                  [cheshire "5.4.0"]
                  [com.stuartsierra/component "0.2.2"]
                  [com.duelinmarkers/ring-request-logging "0.2.0"]]
-  :plugins [[lein-ring "0.8.13"]
+  :plugins [;;[lein-ring "0.8.13"]
             [lein-midje "3.1.3"]
             [quickie "0.3.6"]]
-  :ring {:handler cerberus.core.handler/start-api}
+  ;;  :ring {:handler cerberus.core.handler/start-api}
+  :main cerberus.core.api
   :profiles
   {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
                         [ring-mock "0.1.5"]]}})

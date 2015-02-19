@@ -1,17 +1,17 @@
 (ns cerberus.core.api-test
   (:require [cerberus.core.api :refer :all]
+            [cerberus.core.test-utils :refer [bodify]]
             [clojure.test :refer :all]
             [com.stuartsierra.component :as component]
             [ring.adapter.jetty :as jetty]
-            [cheshire.core :refer :all]
             [clj-http.client :as client]))
 
-(defn bodify [response]
-  (parse-string (:body response)))
+
 
 (deftest test-api
   (testing "get of proxy"
-    (let [jet (jetty/run-jetty (get-app (build-api 8080)) {:port 8080 :join? false})
+    (let [ api (build-api {:port 8080 :join? false})
+          started-comp (component/start api)
           get-req (bodify (client/get "http://127.0.0.1:8080/proxy"))
           post-req (bodify (client/post "http://127.0.0.1:8080/proxy"))
           del-req (bodify (client/delete "http://127.0.0.1:8080/proxy"))
@@ -26,6 +26,7 @@
       (is (= get-req-inst expected-inst))
       (is (= put-req-inst expected-inst))
       (is (= delete-req-inst expected-inst))
-      (.stop jet))))
+      (component/stop started-comp))))
+
 
 

@@ -6,22 +6,16 @@
             [com.stuartsierra.component :as component]
             [com.duelinmarkers.ring-request-logging :refer [wrap-request-logging]]))
 
-(def backend {:remoted-addr "127.0.0.1" :server-port 5000})
-
-(defonce request-counter (atom 0))
-
 (defn append-request [component incoming new-req resp]
-  (println "we in the append-request")
-  (let [counter (swap! request-counter inc)
+  (let [counter (swap! (get component :counter) inc)
         log {:count counter
              :incoming incoming
              :mod new-req
              :response resp}]
     (swap! (:requests component) conj log)))
 
-
 (defn handler [request component]
-  (let [new-req (merge request backend)
+  (let [new-req (merge request (:backend component))
         resp (client/request new-req)]
     (append-request component request new-req resp)
     resp))
@@ -36,14 +30,7 @@
   (-> (routes (app-routes component))
       (wrap-request-logging)))
 
-(defn run
-  [options component]
-  (let [options (merge {:port 8080 :join? false} options)
-        app (get-app component)]
-    (jetty/run-jetty app options)))
-
-
-(defrecord Proxy [requests backends options]
+(defrecord Proxy [requests backend options counter]
   ;; Implement the Lifecycle protocol
   component/Lifecycle
 
@@ -72,5 +59,9 @@
     (assoc component :options nil)
     (assoc component :srv nil)))
 
-(defn build-proxy [requests backend options]
-  (map->Proxy {}))
+(defn build-proxy [requests backend port controller]
+  (map->Proxy {:requests requests :backend backend :options {:port port :join? false} :counter (:request-counter controller)}))
+
+
+(defn convert-json [json]
+  (println json))

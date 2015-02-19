@@ -48,46 +48,46 @@
       (middleware/wrap-json-response)
       (wrap-request-logging)))
 
-(defn run
-  [options component]
-  (let [options (merge {:port 8080 :join? false} options)
-        app (get-app component)]
-    (jetty/run-jetty app options)))
-
-
-(defrecord Api [port]
+(defrecord Api [port join]
   ;; Implement the Lifecycle protocol
   component/Lifecycle
 
-  (start [component]
+  (start [comp]
     (println ";; Starting controller")
-    ;; In the 'start' method, initialize this component
+    ;; In the 'start' method, initialize t
     ;; and start it running. For example, connect to a
     ;; database, create thread pools, or initialize shared
     ;; state.
-    (let [options (merge {:port (:port component)} (:options component))
-          app (app-routes component)
+    (let [options (:options comp)
+          app (get-app comp)
           srv (jetty/run-jetty app options)
           ]
-      (assoc component :options options)
-      (assoc component :srv srv)))
+      (assoc comp :options options)
+      (assoc comp :app app)
+      (assoc comp :srv srv)
+      ))
 
-  (stop [component]
+  (stop [comp]
     (println ";; Stopping controller")
     ;; In the 'stop' method, shut down the running
-    ;; component and release any external resources it has
+    ;; and release any external resources it has
     ;; acquired.
-    (.stop (:srv component))
-    ;; Return the component, optionally modified. Remember that if you
+    (.stop (:srv comp))
+    ;; Return , optionally modified. Remember that if you
     ;; dissoc one of a record's base fields, you get a plain map.
-    (assoc component :options nil)
-    (assoc component :srv nil)))
+    (assoc comp :options nil)
+    (assoc comp :app nil)
+    (assoc comp :srv nil)))
 
 
-(defn build-api [port]
-  (map->Api {:port port}))
+(defn build-api [ring-options]
+  (map->Api {:options ring-options}))
 
-(defn start-api []
-  (let [comp (map->Api {:port 8080})]
-    (get-app comp)))
+(defn start-api [port]
+  (let [comp (build-api port)]
+    (component/start comp)))
  
+(defn -main [& args]
+  (if-let [port (first args)]
+    (start-api (Integer. port))
+    (start-api 8081)))
