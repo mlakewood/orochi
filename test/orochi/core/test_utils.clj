@@ -1,5 +1,6 @@
-(ns cerberus.core.test-utils
+(ns orochi.core.test-utils
   (:require [cheshire.core :refer :all]))
+
 
 (defn bodify [response]
   (parse-string (:body response)))
@@ -11,3 +12,8 @@
         response (update-in response [:response] #(dissoc %1 :request-time))
         ]
     response))
+
+(defn substring? [full-str sub]
+  (if (not= (.indexOf full-str sub) -1)
+    true
+    false))

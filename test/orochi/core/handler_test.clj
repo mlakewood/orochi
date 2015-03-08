@@ -1,7 +1,7 @@
-(ns cerberus.core.handler-test
+(ns orochi.core.handler-test
   (:require [clojure.test :refer :all]
             [ring.mock.request :as mock]
-            [cerberus.core.handler :refer :all]))
+            [orochi.core.handler :refer :all]))
 
 (deftest test-app
   (testing "main route"

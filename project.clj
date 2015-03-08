@@ -1,9 +1,10 @@
-(defproject cerberus "0.1.0-SNAPSHOT"
+(defproject orochi "0.1.0-SNAPSHOT"
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   :min-lein-version "2.0.0"
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [midje "1.6.3"]
+                 [org.clojars.hozumi/clj-commons-exec "1.2.0"]
                  [ring-server "0.3.0"]
                  [ring-jetty-component "0.2.2"]
                  [ring "1.3.0-RC1"]
@@ -17,9 +18,10 @@
                  [com.duelinmarkers/ring-request-logging "0.2.0"]]
   :plugins [;;[lein-ring "0.8.13"]
             [lein-midje "3.1.3"]
-            [quickie "0.3.6"]]
-  ;;  :ring {:handler cerberus.core.handler/start-api}
-  :main cerberus.core.api
+            [quickie "0.3.6"]
+            [com.jakemccrary/lein-test-refresh "0.6.0"]]
+  ;;  :ring {:handleorochi.handler/start-api}
+  :main orochi.core.api
   :profiles
   {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
                         [ring-mock "0.1.5"]]}})

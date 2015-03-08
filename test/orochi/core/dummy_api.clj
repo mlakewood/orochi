@@ -1,4 +1,4 @@
-(ns cerberus.core.dummy-api
+(ns orochi.core.dummy-api
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
             [ring.adapter.jetty :as jetty]

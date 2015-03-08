@@ -1,12 +1,12 @@
-(ns cerberus.core.proxy-test
-  (:require [cerberus.core.proxy :refer :all]
+(ns orochi.core.proxy-test
+  (:require [orochi.core.proxy :refer :all]
             [clojure.test :refer :all]
             [com.stuartsierra.component :as component]
             [cheshire.core :refer :all]
             [clj-http.client :as client]
-            [cerberus.core.dummy-api :refer [start-dummy-app]]
-            [cerberus.core.test-utils :refer [bodify clean-request-list]]
-            [cerberus.core.controller :refer [build-controller]]
+            [orochi.core.dummy-api :refer [start-dummy-app]]
+            [orochi.core.test-utils :refer [bodify clean-request-list]]
+            [orochi.core.controller :refer [build-controller]]
             [clojure.pprint :refer [pprint]]))
 
 
@@ -114,7 +114,7 @@
           frontend-port 8089
           dummy-backend  (start-dummy-app backend-port)
           controller (build-controller {})
-          proxy (build-proxy (atom []) {:remote-addr "127.0.0.1" :server-port backend-port} frontend-port controller)
+          proxy (build-proxy (atom []) {:remote-addr "127.0.0.1" :server-port backend-port} frontend-port controller {})
           started-proxy (component/start proxy)
           res1 (bodify (client/get (str "http://127.0.0.1:" frontend-port "/foo/bar")))
           res2 (bodify (client/get (str "http://127.0.0.1:" frontend-port "/foo/bar")))
@@ -126,6 +126,4 @@
       (.stop dummy-backend)
       (component/stop started-proxy)
       )))
-
-
 
