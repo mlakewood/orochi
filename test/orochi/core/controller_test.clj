@@ -42,7 +42,7 @@
           proxy-name 'test-proxy1'
           backends {:remote-addr "127.0.0.1" :server-port backend-port}
           new-backends {:remote-addr "127.0.0.1" :server-port 5002}
-          new-proxy (build-proxy (atom []) new-backends frontend-port controller {})
+          new-proxy (build-proxy proxy-name (atom []) new-backends frontend-port controller {})
           started-controller (component/start controller)
           new-controller (add-proxy started-controller proxy-name backends frontend-port {})
           st-prox-cont (stop-proxy new-controller proxy-name)
@@ -61,7 +61,7 @@
           proxy-name2 'test-proxy2'
           backends {:remote-addr "127.0.0.1" :server-port backend-port}
           new-backends {:remote-addr "127.0.0.1" :server-port 5002}
-          new-proxy (build-proxy (atom []) new-backends frontend-port controller {})
+          new-proxy (build-proxy proxy-name (atom []) new-backends frontend-port controller {})
           started-controller (component/start controller)
           new-controller (add-proxy started-controller proxy-name backends frontend-port {})
           new-controller (add-proxy started-controller proxy-name2 backends frontend-port2 {})
@@ -83,7 +83,7 @@
           proxy-name 'test-proxy1'
           backends {:remote-addr "127.0.0.1" :server-port backend-port}
           new-backends {:remote-addr "127.0.0.1" :server-port 5002}
-          new-proxy (build-proxy (atom []) new-backends frontend-port controller {})
+          new-proxy (build-proxy proxy-name (atom []) new-backends frontend-port controller {})
           started-controller (component/start controller)
           new-controller (add-proxy started-controller proxy-name backends frontend-port {})
           st-prox-cont (clear-proxies new-controller)

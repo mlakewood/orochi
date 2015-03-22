@@ -11,7 +11,16 @@
             [orochi.core.serializer :as serializer]
             [orochi.core.controller :refer [build-controller add-proxy]]
             [orochi.core.commands :refer [value->command]]
-            [com.duelinmarkers.ring-request-logging :refer [wrap-request-logging]]))
+            [com.duelinmarkers.ring-request-logging :refer [wrap-request-logging]])
+  (:gen-class))
+
+(defn get-index []
+  {:body [{:method "GET" :url "/" :desc "Get all possible resources"}
+           {:method "GET" :url "/proxy" :desc "Get all Proxies"}
+           {:method "POST" :url "/proxy" :desc "Create a new proxy"}
+           {:method "DELETE" :url "/proxy" :desc "Shutdown and remove All Proxies"}
+           {:method "GET" :url "/proxy/<proxy-name>" :desc "Get the proxy instance resource"}
+           {:method "DELETE" :url "/proxy/<proxy-name>" :desc "Shutdown and remove the proxy instance"}]})
 
 (defn get-proxy-list [request comp]
   (let [cont (:cont @(:controller comp))]
@@ -33,27 +42,25 @@
   (let [stopped (component/stop (:cont @(:controller comp)))]
     {:body (serializer/->json stopped)}))
 
-(defn get-proxy-inst [request proxy-id component]
-  {:body {"status" (str "tested " proxy-id)}})
-
-(defn modify-proxy [request proxy-id component]
-  {:body {"status" (str "tested " proxy-id)}})
+(defn get-proxy-inst [request proxy-id comp]
+  (let [proxies @(:proxies (:cont @(:controller comp)))
+        proxy (get proxies proxy-id)
+        proxy-result (if (nil? proxy)
+                       {:status 404 :body {:error (str "Proxy " proxy-id " does not exist")}}
+                       {:body (serializer/->json (assoc proxy :name proxy-id))})]
+    proxy-result))
 
 (defn delete-proxy [request proxy-id component]
   {:body {"status" (str "tested " proxy-id)}})
 
-(defn get-proxy-requests [request proxy-id component]
-    {:body {"status" (str "tested " proxy-id)}})
-
 (defn app-routes [component]
   (compojure.core/routes
+   (GET "/" [:as req] (get-index)) 
    (GET "/proxy" [:as req] (get-proxy-list req component))
    (POST "/proxy" [:as req] (create-proxy req component))
    (DELETE "/proxy" [:as req] (reset-controller req component))
    (GET "/proxy/:proxy-id" [proxy-id :as req] (get-proxy-inst req proxy-id component))
-   (PUT "/proxy/:proxy-id" [proxy-id :as req] (modify-proxy req proxy-id component))
    (DELETE "/proxy/:proxy-id" [proxy-id :as req] (delete-proxy req proxy-id component))
-   (GET "/proxy/:proxy-id/requests" [proxy-id :as req] (get-proxy-requests req proxy-id component))
    (route/not-found "Resource not found")))
 
 

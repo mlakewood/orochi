@@ -114,7 +114,7 @@
           frontend-port 8089
           dummy-backend  (start-dummy-app backend-port)
           controller (build-controller {})
-          proxy (build-proxy (atom []) {:remote-addr "127.0.0.1" :server-port backend-port} frontend-port controller {})
+          proxy (build-proxy "test-proxy-1" (atom []) {:remote-addr "127.0.0.1" :server-port backend-port} frontend-port controller {})
           started-proxy (component/start proxy)
           res1 (bodify (client/get (str "http://127.0.0.1:" frontend-port "/foo/bar")))
           res2 (bodify (client/get (str "http://127.0.0.1:" frontend-port "/foo/bar")))

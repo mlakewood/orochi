@@ -29,10 +29,9 @@
 
 
 (defn get-app [component]
-  (-> (routes (app-routes component))
-      (wrap-request-logging)))
+  (wrap-request-logging (routes (app-routes component))))
 
-(defrecord Proxy [requests backend options counter]
+(defrecord Proxy [name requests backend options counter]
   ;; Implement the Lifecycle protocol
   component/Lifecycle
 
@@ -67,13 +66,15 @@
   serializer/Serialize
   (->json [this]
     (let [result {:requests @(:requests this)
+                  :name (:name this)
                   :backend (:backend this)
                   :options (:options this)
                   :command (serializer/->json (:command this))}]
       result)))
 
-(defn build-proxy [requests backend port controller command]
-  (map->Proxy {:requests requests
+(defn build-proxy [name requests backend port controller command]
+  (map->Proxy {:name name
+               :requests requests
                :backend backend
                :options {:port port :join? false}
                :counter (:request-counter controller)

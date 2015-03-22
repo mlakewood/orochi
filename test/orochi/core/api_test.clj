@@ -44,6 +44,22 @@
                               "teardown-result" nil,
                               "finished" "/Users/underplank/projects/orochi/scripts/../venv/bin/python /Users/underplank/projects/orochi/scripts/started-check.py http://127.0.0.1:8001/README.md"}}])
 
+(def get-instance-listing {"name" "test-proxy-1",
+                   "requests" [],
+                   "backend" {"remote-addr" "127.0.0.1", "server-port" "8001"},
+                   "options" {"join?" false, "port" 8081},
+                   "command" {"started-check" "/Users/underplank/projects/orochi/scripts/../venv/bin/python /Users/underplank/projects/orochi/scripts/started-check.py http://127.0.0.1:8001/README.md",
+                              "setup-result" {"out" "Run setup\nfinished setup.sh\n", "err" ""},                    
+                              "command" "/Users/underplank/projects/orochi/scripts/command.sh 8001",
+                              "teardown" "/Users/underplank/projects/orochi/scripts/teardown.sh",
+                              "finished-output" nil,
+                              "setup" "/Users/underplank/projects/orochi/scripts/setup.sh",
+                              "command-result" {"out" "starting command\n",
+                                                "err" ""},
+                              "started-check-result" {"out" "we got 200!\n", "err" ""},                              
+                              "teardown-result" nil,
+                              "finished" "/Users/underplank/projects/orochi/scripts/../venv/bin/python /Users/underplank/projects/orochi/scripts/started-check.py http://127.0.0.1:8001/README.md"}})
+
 
 
 (def after-del-listing [{"name" "test-proxy-2",
@@ -83,23 +99,24 @@
                                                        "got exception\ngot exception\ngot exception\ngot exception\nwe got badness\n",
                                                        "err" ""}}}])
 
+(def expected-not-found {:orig-content-encoding nil,
+                    :trace-redirects ["http://127.0.0.1:8080/proxy/123"],
+                    :status 404,
+                    :body "{\"error\":\"Proxy 123 does not exist\"}"})
+
 
 (deftest test-api
   (testing "get of proxy"
     (let [api (build-api {:port 8080 :join? false})
           started-comp (component/start api)
           get-req (bodify (client/get "http://127.0.0.1:8080/proxy"))
-          del-req (bodify (client/delete "http://127.0.0.1:8080/proxy"))
-          get-req-inst (bodify (client/get "http://127.0.0.1:8080/proxy/123"))
-          put-req-inst (bodify (client/put "http://127.0.0.1:8080/proxy/123"))
+          not-found-resp (client/get "http://127.0.0.1:8080/proxy/123" {:throw-exceptions false})
           delete-req-inst (bodify (client/delete "http://127.0.0.1:8080/proxy/123"))
           expected {"status" "tested"}
           expected-inst {"status" "tested 123"}
           stopped-api (component/stop started-comp)]
       (is (= get-req []))
-      (is (= del-req []))
-      (is (= get-req-inst expected-inst))
-      (is (= put-req-inst expected-inst))
+      (is (= (dissoc not-found-resp :headers :request-time) expected-not-found))
       (is (= delete-req-inst expected-inst))))
   (testing "post to proxy"
     (let [api (build-api {:port 8080 :join? false})
@@ -139,9 +156,9 @@
           proxy-name-1 "test-proxy-1"
           front-port-1 8081
           command-1 {:setup (str base-path "setup.sh")
-                   :command (str base-path "command.sh 8001")
-                   :started-check (str base-path "../venv/bin/python " base-path "started-check.py http://127.0.0.1:8001/README.md")
-                   :teardown (str base-path "teardown.sh")}
+                     :command (str base-path "command.sh 8001")
+                     :started-check (str base-path "../venv/bin/python " base-path "started-check.py http://127.0.0.1:8001/README.md")
+                     :teardown (str base-path "teardown.sh")}
           backend-1 {:remote-addr "127.0.0.1" :server-port "8001"} 
           proxy1-req {:name proxy-name-1 :front-port front-port-1 :backend backend-1 :command command-1}
           post-resp (bodify (client/post "http://127.0.0.1:8080/proxy" {:body (generate-string proxy1-req)}))
@@ -150,8 +167,8 @@
           proxy-name-2 "test-proxy-2"
           front-port-2 8082
           command-2 {:setup (str base-path "setup.sh")
-                   :command (str base-path "command.sh 8002")
-                   :started-check (str base-path "../venv/bin/python " base-path "started-check.py http://127.0.0.1:8002/README.md")
+                     :command (str base-path "command.sh 8002")
+                     :started-check (str base-path "../venv/bin/python " base-path "started-check.py http://127.0.0.1:8002/README.md")
                      :teardown (str base-path "teardown.sh")}
           backend-2 {:remote-addr "127.0.0.1" :server-port "8002"} 
           proxy2-req {:name proxy-name-2 :front-port front-port-2 :backend backend-2 :command command-2}
@@ -174,9 +191,9 @@
           proxy-name-1 "test-proxy-1"
           front-port-1 8081
           command-1 {:setup (str base-path "setup.sh")
-                   :command (str base-path "command.sh 8001")
-                   :started-check (str base-path "../venv/bin/python " base-path "started-check.py http://127.0.0.1:8001/README.md")
-                   :teardown (str base-path "teardown.sh")}
+                     :command (str base-path "command.sh 8001")
+                     :started-check (str base-path "../venv/bin/python " base-path "started-check.py http://127.0.0.1:8001/README.md")
+                     :teardown (str base-path "teardown.sh")}
           backend-1 {:remote-addr "127.0.0.1" :server-port "8001"} 
           proxy1-req {:name proxy-name-1 :front-port front-port-1 :backend backend-1 :command command-1}
           post-resp (bodify (client/post "http://127.0.0.1:8080/proxy" {:body (generate-string proxy1-req)}))
@@ -185,8 +202,8 @@
           proxy-name-2 "test-proxy-2"
           front-port-2 8082
           command-2 {:setup (str base-path "setup.sh")
-                   :command (str base-path "command.sh 8002")
-                   :started-check (str base-path "../venv/bin/python " base-path "started-check.py http://127.0.0.1:8002/README.md")
+                     :command (str base-path "command.sh 8002")
+                     :started-check (str base-path "../venv/bin/python " base-path "started-check.py http://127.0.0.1:8002/README.md")
                      :teardown (str base-path "teardown.sh")}
           backend-2 {:remote-addr "127.0.0.1" :server-port "8002"} 
           proxy2-req {:name proxy-name-2 :front-port front-port-2 :backend backend-2 :command command-2}
@@ -200,4 +217,23 @@
                     ]]
       (is (= mod-resp after-del-listing))
       ))
-  )
+  (testing "get-individual proxies"
+    (let [api (build-api {:port 8080 :join? false})
+          started-comp (component/start api)
+          base-path "/Users/underplank/projects/orochi/scripts/"
+
+          ;; build the first proxy data
+          proxy-name-1 "test-proxy-1"
+          front-port-1 8081
+          command-1 {:setup (str base-path "setup.sh")
+                     :command (str base-path "command.sh 8001")
+                     :started-check (str base-path "../venv/bin/python " base-path "started-check.py http://127.0.0.1:8001/README.md")
+                     :teardown (str base-path "teardown.sh")}
+          backend-1 {:remote-addr "127.0.0.1" :server-port "8001"} 
+          proxy1-req {:name proxy-name-1 :front-port front-port-1 :backend backend-1 :command command-1}
+          post-resp (bodify (client/post "http://127.0.0.1:8080/proxy" {:body (generate-string proxy1-req)}))
+          
+          get-resp (bodify (client/get "http://127.0.0.1:8080/proxy/test-proxy-1"))
+          stopped-api (component/stop started-comp)
+          mod-resp (assoc-in get-resp ["command" "command-result" "err"] "")]
+      (is (= mod-resp get-instance-listing)))))
