@@ -22,7 +22,7 @@ $ java -jar target/orochi-0.1.0-standalone.jar 8080
 
 ## download jar
 
-1. Download the jar from the releases page of Orochi. (https://github.com/mlakewood/orochi/releases/download/v0.1.0/orochi-0.1.0.jar)
+1. Download the jar from the releases page of Orochi. (https://github.com/mlakewood/orochi/releases/download/v0.1.0/orochi-0.1.0-standalone.jar)
 2. java -jar orochi-0.1.0.jar 8080
 
 ## Configure a Proxy server
