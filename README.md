@@ -32,7 +32,14 @@ Once orochi is up and running you can then query the api through the http interf
 make the following request to add a new proxy
 
 ```
-curl -XPOST '127.0.0.1:8080/proxy' ' -H "Accept: application/json" -d '{"name": "proxy-1", "backend": {"remote-addr": "127.0.0.1", "server-port": "8000"}, "front-port": 8081, "command": {"setup": "setup.sh", "command": "command.sh 8000", "started-check": "python started-check.py http://127.0.0.1:8000/README.md", "teardown": "teardown.sh"}}'
+curl -XPOST '127.0.0.1:8080/proxy' -H "Accept: application/json" \
+-d '{"name": "proxy-1", '\
+'    "backend": {"remote-addr": "127.0.0.1", "server-port": "8000"},'\
+'    "front-port": 8081, '\
+'    "command": {"setup": "setup.sh", '\
+'                "command": "command.sh 8000", '\
+'                "started-check": "python started-check.py http://127.0.0.1:8000/README.md",'\
+'                "teardown": "teardown.sh"}}'
 
 ```
 
@@ -52,10 +59,9 @@ This is how the proxy re-routes requests to the service under test. Clojure ring
 
 ```
 "command": {"setup": "setup.sh",
-"command": "command.sh 8000",
-"started-check": "python started-check.py http://127.0.0.1:8000/README.md",
-"teardown": "teardown.sh"}
-}
+            "command": "command.sh 8000", 
+            "started-check": "python started-check.py http://127.0.0.1:8000/README.md",
+            "teardown": "teardown.sh"}
 ```
 
 This specifies how you would like to start and stop the service under test. Setup is the first command run and blocks until finished. command is the next to run and is a non-blocking command so that a service can be spun off and run in parallel. started-check is to verify that the service is running and is a blocking command. When creating the service all these are run in sequence. Which means by the time your post has finished the service under-test should have been started. The teardown command will be run when a proxy is commanded to stop. It is also a blocking command.
