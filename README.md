@@ -64,8 +64,7 @@ This is how the proxy re-routes requests to the service under test. Clojure ring
             "teardown": "teardown.sh"}
 ```
 
-This specifies how you would like to start and stop the service under test. Setup is the first command run and blocks until finished. command is the next to run and is a non-blocking command so that a service can be spun off and run in parallel. started-check is to verify that the service is running and is a blocking command. When creating the service all these are run in sequence. Which means by the time your post has finished the service under-test should have been started. The teardown command will be run when a proxy is commanded to stop. It is also a blocking command.
-
+This specifies how you would like to start and stop the service under test. Setup is the first command run and blocks until finished. Command is the next to run and is a non-blocking command so that a service can be spun off and run in parallel. Started-Check is to verify that the service is running and is a blocking command. When creating the service all these are run in sequence. Which means by the time your post has finished the service under-test should have been started. The teardown command will be run when a proxy is commanded to stop and is a blocking command.
 
 
 
@@ -74,7 +73,7 @@ This specifies how you would like to start and stop the service under test. Setu
 Following are the key concepts required to understand how orochi works.
 
 ## Proxy
-The main workhorse of orochi is the proxy. When you want test the interaction between two services, wrap both services in a proxy and make http requests to the forwarding port on the proxy. Orochi will record all the requests, responses and the ordering. 
+The main workhorse of orochi is the proxy. When you want test the interaction between two services, wrap both services in a proxy and make http requests to the front-port specified on the proxy. Orochi will record all the requests, responses and the ordering. 
 
 ## Command
 The command is the service under test. There are four seperate commands available to control the services under test. Each command is a string that will be run as a command on the commandline as is.
@@ -87,7 +86,7 @@ The command is the service under test. There are four seperate commands availabl
 This allows language agnostic configuration of Orochi, such as adding more proxies, removing them and listing the current recorded requests.
 
 ## Controller
-The Controller handles spinning up of new proxies and commands and also holding the reference the list of requests.
+The Controller handles spinning up of new proxies and commands and also holding the reference to the list of requests.
 
 
 
