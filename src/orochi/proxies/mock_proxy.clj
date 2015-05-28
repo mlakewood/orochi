@@ -1,4 +1,4 @@
-(ns orochi.core.proxy
+(ns orochi.proxies.mock-proxy
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
             [ring.adapter.jetty :as jetty]
@@ -6,26 +6,28 @@
             [com.stuartsierra.component :as component]
             [orochi.core.serializer :as serializer]
             [clojure.pprint :refer [pprint]]
-            [orochi.proxies.pass-through-proxy :refer [proxy-request]]
-            [orochi.proxies.web-hook :refer [web-hook]]
             [com.duelinmarkers.ring-request-logging :refer [wrap-request-logging]]))
 
-(defmulti handler (fn [comp request] (:type (:backend comp))))
 
-(defmethod handler "proxy" [component request]
-  (proxy-request component request))
 
-(defmethod handler "web-hook" [component request]
-  (web-hook component request))
 
-(defmethod handler :default [componet request]
- (throw (IllegalArgumentException. 
-          (str "No backend type set"))))
+(defn append-request [component incoming new-req resp]
+  (let [counter (swap! (get component :counter) inc)
+        log {:count counter
+             :incoming (dissoc  incoming :throw-exceptions)
+             :mod (dissoc new-req :throw-exceptions)
+             :response (dissoc resp :throw-exceptions)}]
+    (swap! (:requests component) conj log)))
 
+(defn handler [request component]
+  (let [new-req (merge request (:backend component) {:throw-exceptions false})
+        resp (client/request new-req)]
+    (append-request component request new-req resp)
+    resp))
 
 (defn app-routes [component]
   (compojure.core/routes
-   (ANY "/*" [:as req] (handler component req))
+   (ANY "/*" [:as req] (handler req component))
    (route/not-found "Resource not found")))
 
 (defn fetch-body [body]

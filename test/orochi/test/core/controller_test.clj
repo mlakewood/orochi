@@ -1,4 +1,4 @@
-(ns orochi.core.controller-test
+(ns orochi.test.core.controller-test
   (:require [orochi.core.controller :refer :all]
             [orochi.core.proxy :refer :all]
             [com.stuartsierra.component :as component]

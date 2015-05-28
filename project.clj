@@ -18,8 +18,7 @@
                  [com.duelinmarkers/ring-request-logging "0.2.0"]]
   :plugins [;;[lein-ring "0.8.13"]
             [lein-midje "3.1.3"]
-            [quickie "0.3.6"]
-            [com.jakemccrary/lein-test-refresh "0.6.0"]]
+            [quickie "0.3.6"]]
   ;;  :ring {:handleorochi.handler/start-api}
   :main orochi.core.api
   :profiles

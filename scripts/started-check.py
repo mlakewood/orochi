@@ -1,4 +1,4 @@
-#!/bin/env python
+#!/usr/bin/env python
 
 import requests
 from time import sleep
@@ -22,7 +22,7 @@ while count < 4:
         print "we got 200!"
         exit(0)
     count += 1
-    sleep(1)
+#    sleep(1)
 
 print "we got badness"
 exit(16)

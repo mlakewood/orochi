@@ -1,10 +1,5 @@
 #!/bin/bash
 
 
-killall Python
-num=$(ps aux | grep Python | wc -l)
-if [ $num -gt 1 ]
-   then 
-       return 16
-fi
-
+kill -TERM $(cat /Users/underplank/projects/orochi/scripts/server-$1.pid)
+rm scripts/server-$1.pid

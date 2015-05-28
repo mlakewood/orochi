@@ -1,14 +1,13 @@
-(ns orochi.core.proxy-test
+(ns orochi.test.core.proxy-test
   (:require [orochi.core.proxy :refer :all]
             [clojure.test :refer :all]
             [com.stuartsierra.component :as component]
             [cheshire.core :refer :all]
             [clj-http.client :as client]
-            [orochi.core.dummy-api :refer [start-dummy-app]]
-            [orochi.core.test-utils :refer [bodify clean-request-list]]
+            [orochi.test.core.dummy-api :refer [start-dummy-app]]
+            [orochi.test.core.test-utils :refer [bodify clean-request-list]]
             [orochi.core.controller :refer [build-controller]]
             [clojure.pprint :refer [pprint]]))
-
 
 (def result [{:count 1,
     :incoming
@@ -108,22 +107,33 @@
      :body "{\"status\":\"tested\"}"}}])
 
 
+(def reg (atom {}))
+
+
 (deftest test-proxy
   (testing "build the proxy"
-    (let [backend-port 5001
-          frontend-port 8089
-          dummy-backend  (start-dummy-app backend-port)
-          controller (build-controller {})
-          proxy (build-proxy "test-proxy-1" (atom []) {:remote-addr "127.0.0.1" :server-port backend-port} frontend-port controller {})
-          started-proxy (component/start proxy)
-          res1 (bodify (client/get (str "http://127.0.0.1:" frontend-port "/foo/bar")))
-          res2 (bodify (client/get (str "http://127.0.0.1:" frontend-port "/foo/bar")))
-          request-list (:requests started-proxy)
-          req (map clean-request-list @request-list)
-          ]
-      (is (= res1 {"status" "tested"}))
-      (is (= result req))
-      (.stop dummy-backend)
-      (component/stop started-proxy)
-      )))
+    (try
+      (let [backend-port 5001
+            frontend-port 8089
+            dummy-backend  (start-dummy-app backend-port)
+            _ (swap! reg assoc :backend dummy-backend)
+            controller (build-controller {})
+            backend {:type "proxy" :payload {:remote-addr "127.0.0.1" :server-port backend-port}}
+            proxy (build-proxy "test-proxy-1" (atom []) backend frontend-port controller {})
+            started-proxy (component/start proxy)
+            _ (swap! reg assoc :proxy started-proxy)
+            res1 (bodify (client/get (str "http://127.0.0.1:" frontend-port "/foo/bar")))
+            res2 (bodify (client/get (str "http://127.0.0.1:" frontend-port "/foo/bar")))
+            request-list (:requests started-proxy)
+            req (map clean-request-list @request-list)]
+        (is (= res1 {"status" "tested"}))
+        (is (= result req)))
+      (finally
+        (.stop (:backend @reg))
+        (component/stop (:proxy @reg))
+        (swap! reg {}))))
+  )
+
+
+
 

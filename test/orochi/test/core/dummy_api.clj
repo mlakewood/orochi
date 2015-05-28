@@ -1,12 +1,14 @@
-(ns orochi.core.dummy-api
+(ns orochi.test.core.dummy-api
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
             [ring.adapter.jetty :as jetty]
             [ring.middleware.json :as middleware]
             [com.duelinmarkers.ring-request-logging :refer [wrap-request-logging]]))
 
+(def record-request (atom []))
 
 (defn get-handler [request]
+  (swap! record-request conj request)
   {:body {:status "tested"}})
 
 

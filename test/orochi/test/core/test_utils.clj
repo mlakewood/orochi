@@ -1,4 +1,4 @@
-(ns orochi.core.test-utils
+(ns orochi.test.core.test-utils
   (:require [cheshire.core :refer :all]))
 
 
