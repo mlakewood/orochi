@@ -1,6 +1,6 @@
 (ns orochi.test.core.api-test
   (:require [orochi.core.api :refer :all]
-            [orochi.test.core.test-utils :refer [bodify]]
+            [orochi.test.core.test-utils :refer [bodify scripts-path python-path]]
             [clojure.test :refer :all]
             [com.stuartsierra.component :as component]
             [ring.adapter.jetty :as jetty]
@@ -10,89 +10,87 @@
 
 
 
-
-
 (def get-listing [{"name" "test-proxy-2",
-                   "requests" [],
+                   "actions" [],
                    "backend" {"type" "proxy", "payload" {"remote-addr" "127.0.0.1", "server-port" "8002"}},
                    "options" {"join?" false, "port" 8082},
-                   "command" {"started-check" "/Users/underplank/projects/orochi/scripts/../venv/bin/python /Users/underplank/projects/orochi/scripts/started-check.py http://127.0.0.1:8002/README.md",
+                   "command" {"started-check" (str python-path scripts-path "started-check.py http://127.0.0.1:8002/README.md"), 
                               "setup-result" {"out" "Run setup\nfinished setup.sh\n", "err" ""},                    
-                              "command" "/Users/underplank/projects/orochi/scripts/command.sh 8002",
-                              "teardown" "/Users/underplank/projects/orochi/scripts/teardown.sh 8002",
+                              "command" (str scripts-path "command.sh 8002"), 
+                              "teardown" (str scripts-path "teardown.sh 8002"), 
                               "finished-output" nil,
-                              "setup" "/Users/underplank/projects/orochi/scripts/setup.sh",
+                              "setup" (str scripts-path "setup.sh"), 
                               "command-result" {"out" "starting command\n",
                                                 "err" ""},
                               "started-check-result" {"out" "we got 200!\n", "err" ""},                              
                               "teardown-result" nil,
-                              "finished" "/Users/underplank/projects/orochi/scripts/../venv/bin/python /Users/underplank/projects/orochi/scripts/started-check.py http://127.0.0.1:8002/README.md"}
+                              "finished" (str python-path scripts-path "started-check.py http://127.0.0.1:8002/README.md")}
                    },
                   {"name" "test-proxy-1",
-                   "requests" [],
+                   "actions" [],
                    "backend" {"type" "proxy", "payload" {"remote-addr" "127.0.0.1", "server-port" "8001"}}, 
                    "options" {"join?" false, "port" 8081},
-                   "command" {"started-check" "/Users/underplank/projects/orochi/scripts/../venv/bin/python /Users/underplank/projects/orochi/scripts/started-check.py http://127.0.0.1:8001/README.md",
+                   "command" {"started-check" (str python-path scripts-path "started-check.py http://127.0.0.1:8001/README.md")
                               "setup-result" {"out" "Run setup\nfinished setup.sh\n", "err" ""},                    
-                              "command" "/Users/underplank/projects/orochi/scripts/command.sh 8001",
-                              "teardown" "/Users/underplank/projects/orochi/scripts/teardown.sh 8001",
+                              "command" (str scripts-path "command.sh 8001"), 
+                              "teardown" (str scripts-path "teardown.sh 8001"), 
                               "finished-output" nil,
-                              "setup" "/Users/underplank/projects/orochi/scripts/setup.sh",
+                              "setup" (str scripts-path "setup.sh"), 
                               "command-result" {"out" "starting command\n",
                                                 "err" ""},
                               "started-check-result" {"out" "we got 200!\n", "err" ""},                              
                               "teardown-result" nil,
-                              "finished" "/Users/underplank/projects/orochi/scripts/../venv/bin/python /Users/underplank/projects/orochi/scripts/started-check.py http://127.0.0.1:8001/README.md"}}])
+                              "finished" (str python-path scripts-path "started-check.py http://127.0.0.1:8001/README.md") }}])
 
 (def get-instance-listing {"name" "test-proxy-1",
-                   "requests" [],
+                   "actions" [],
                    "backend" {"type" "proxy", "payload" {"remote-addr" "127.0.0.1", "server-port" "8001"}},
                    "options" {"join?" false, "port" 8081},
-                   "command" {"started-check" "/Users/underplank/projects/orochi/scripts/../venv/bin/python /Users/underplank/projects/orochi/scripts/started-check.py http://127.0.0.1:8001/README.md",
+                   "command" {"started-check" (str python-path scripts-path "started-check.py http://127.0.0.1:8001/README.md"), 
                               "setup-result" {"out" "Run setup\nfinished setup.sh\n", "err" ""},                    
-                              "command" "/Users/underplank/projects/orochi/scripts/command.sh 8001",
-                              "teardown" "/Users/underplank/projects/orochi/scripts/teardown.sh 8001",
+                              "command" (str scripts-path "command.sh 8001"), 
+                              "teardown" (str scripts-path "teardown.sh 8001"), 
                               "finished-output" nil,
-                              "setup" "/Users/underplank/projects/orochi/scripts/setup.sh",
+                              "setup" (str scripts-path "setup.sh"), 
                               "command-result" {"out" "starting command\n",
                                                 "err" ""},
                               "started-check-result" {"out" "we got 200!\n", "err" ""},                              
                               "teardown-result" nil,
-                              "finished" "/Users/underplank/projects/orochi/scripts/../venv/bin/python /Users/underplank/projects/orochi/scripts/started-check.py http://127.0.0.1:8001/README.md"}})
+                              "finished" (str python-path scripts-path "started-check.py http://127.0.0.1:8001/README.md" ) }})
 
 (def after-del-listing [{"name" "test-proxy-2",
-                         "requests" [],
+                         "actions" [],
                          "backend" {"type" "proxy" "payload" {"remote-addr" "127.0.0.1", "server-port" "8002"}},
                          "options" nil,
-                         "command" {"started-check" "/Users/underplank/projects/orochi/scripts/../venv/bin/python /Users/underplank/projects/orochi/scripts/started-check.py http://127.0.0.1:8002/README.md",
+                         "command" {"started-check" (str python-path scripts-path "started-check.py http://127.0.0.1:8002/README.md"), 
                                     "setup-result" {"out" "Run setup\nfinished setup.sh\n", "err" ""},                    
-                                    "command" "/Users/underplank/projects/orochi/scripts/command.sh 8002",
-                                    "teardown" "/Users/underplank/projects/orochi/scripts/teardown.sh 8002",
-                                    "setup" "/Users/underplank/projects/orochi/scripts/setup.sh",
+                                    "command" (str scripts-path "command.sh 8002"),
+                                    "teardown" (str scripts-path "teardown.sh 8002"),
+                                    "setup" (str scripts-path "setup.sh"),
                                     "command-result" {"out" "starting command\n",
                                                       "err" ""},
                                     "started-check-result" {"out" "we got 200!\n", "err" ""},                              
                                     "teardown-result" {"out" "", "err" ""},
-                                    "finished" "/Users/underplank/projects/orochi/scripts/../venv/bin/python /Users/underplank/projects/orochi/scripts/started-check.py http://127.0.0.1:8002/README.md",
+                                    "finished" (str python-path scripts-path "started-check.py http://127.0.0.1:8002/README.md"),
                                     "finished-output" {"out" 
                                                        "got exception\ngot exception\ngot exception\ngot exception\nwe got badness\n",
                                                        "err" ""}}
                          },
                         {"name" "test-proxy-1",
-                         "requests" [],
+                         "actions" [],
                          "backend" {"type" "proxy" "payload" {"remote-addr" "127.0.0.1", "server-port" "8001"},}
                          "options" nil,
-                         "command" {"started-check" "/Users/underplank/projects/orochi/scripts/../venv/bin/python /Users/underplank/projects/orochi/scripts/started-check.py http://127.0.0.1:8001/README.md",
+                         "command" {"started-check" (str python-path scripts-path "started-check.py http://127.0.0.1:8001/README.md"),
                                     "setup-result" {"out" "Run setup\nfinished setup.sh\n", "err" ""},                    
-                                    "command" "/Users/underplank/projects/orochi/scripts/command.sh 8001",
-                                    "teardown" "/Users/underplank/projects/orochi/scripts/teardown.sh 8001",
-                                    "setup" "/Users/underplank/projects/orochi/scripts/setup.sh",
+                                    "command" (str scripts-path "command.sh 8001"),
+                                    "teardown" (str scripts-path "teardown.sh 8001"),
+                                    "setup" (str scripts-path "setup.sh"),
                                     "command-result" {"out" "starting command\n",
                                                       "err" ""},
                                     "started-check-result" {"out" "we got 200!\n", "err" ""},                              
                                     "teardown-result" {"out" "",
                                                         "err" ""},
-                                    "finished" "/Users/underplank/projects/orochi/scripts/../venv/bin/python /Users/underplank/projects/orochi/scripts/started-check.py http://127.0.0.1:8001/README.md",
+                                    "finished" (str python-path scripts-path "started-check.py http://127.0.0.1:8001/README.md"),
                                     "finished-output" {"out"
                                                        "got exception\ngot exception\ngot exception\ngot exception\nwe got badness\n",
                                                        "err" ""}}}])
@@ -121,11 +119,10 @@
           started-comp (component/start api)
           proxy-name "test-proxy-1"
           front-port 8081
-          base-path "/Users/underplank/projects/orochi/scripts/"
-          command {:setup (str base-path "setup.sh")
-                   :command (str base-path "command.sh 8001")
-                   :started-check (str base-path "../venv/bin/python " base-path "started-check.py http://127.0.0.1:8001/README.md")
-                   :teardown (str base-path "teardown.sh 8001")}
+          command {:setup (str scripts-path "setup.sh")
+                   :command (str scripts-path "command.sh 8001")
+                   :started-check (str python-path  scripts-path "started-check.py http://127.0.0.1:8001/README.md")
+                   :teardown (str scripts-path "teardown.sh 8001")}
           backend {:type "proxy" :payload {:remote-addr "127.0.0.1" :server-port "8099"}} 
           proxy-req {:name proxy-name :front-port front-port :backend backend :command command}
           post-resp (bodify (client/post "http://127.0.0.1:8080/proxy" {:body (generate-string proxy-req)}))
@@ -136,7 +133,7 @@
       (is (= (get-in controller [proxy-name :backend]) backend))
       (is (= (get-in controller [proxy-name :options]) {:port front-port :join? false}))
       (is (= @(get-in controller [proxy-name :counter]) 0))
-      (is (= @(get-in controller [proxy-name :requests]) []))
+      (is (= @(get-in controller [proxy-name :actions]) []))
       (is (= (:ready? (get-in controller [proxy-name :command])) true))
       (is (not (= (:setup-res (get-in controller [proxy-name :command])) nil)))
       (is (not (= (:command-res (get-in controller [proxy-name :command])) nil)))
@@ -148,15 +145,13 @@
   (testing "get proxy list"
     (let [api (build-api {:port 8080 :join? false})
           started-comp (component/start api)
-          base-path "/Users/underplank/projects/orochi/scripts/"
-
           ;; build the first proxy data
           proxy-name-1 "test-proxy-1"
           front-port-1 8081
-          command-1 {:setup (str base-path "setup.sh")
-                     :command (str base-path "command.sh 8001")
-                     :started-check (str base-path "../venv/bin/python " base-path "started-check.py http://127.0.0.1:8001/README.md")
-                     :teardown (str base-path "teardown.sh 8001")}
+          command-1 {:setup (str scripts-path "setup.sh")
+                     :command (str scripts-path "command.sh 8001")
+                     :started-check (str python-path scripts-path "started-check.py http://127.0.0.1:8001/README.md")
+                     :teardown (str scripts-path "teardown.sh 8001")}
           backend-1 {:type "proxy" :payload  {:remote-addr "127.0.0.1" :server-port "8001"}}
           proxy1-req {:name proxy-name-1 :front-port front-port-1 :backend backend-1 :command command-1}
           post-resp (bodify (client/post "http://127.0.0.1:8080/proxy" {:body (generate-string proxy1-req)}))
@@ -164,10 +159,10 @@
           ;; build the second proxy name
           proxy-name-2 "test-proxy-2"
           front-port-2 8082
-          command-2 {:setup (str base-path "setup.sh")
-                     :command (str base-path "command.sh 8002")
-                     :started-check (str base-path "../venv/bin/python " base-path "started-check.py http://127.0.0.1:8002/README.md")
-                     :teardown (str base-path "teardown.sh 8002")}
+          command-2 {:setup (str scripts-path "setup.sh")
+                     :command (str scripts-path "command.sh 8002")
+                     :started-check (str scripts-path "../../../venv/bin/python " scripts-path "started-check.py http://127.0.0.1:8002/README.md")
+                     :teardown (str scripts-path "teardown.sh 8002")}
           backend-2 {:type "proxy" :payload {:remote-addr "127.0.0.1" :server-port "8002"}}
           proxy2-req {:name proxy-name-2 :front-port front-port-2 :backend backend-2 :command command-2}
           post-resp (bodify (client/post "http://127.0.0.1:8080/proxy" {:body (generate-string proxy2-req)}))
@@ -183,15 +178,14 @@
   (testing "reset all proxies"
     (let [api (build-api {:port 8080 :join? false})
           started-comp (component/start api)
-          base-path "/Users/underplank/projects/orochi/scripts/"
 
           ;; build the first proxy data
           proxy-name-1 "test-proxy-1"
           front-port-1 8081
-          command-1 {:setup (str base-path "setup.sh")
-                     :command (str base-path "command.sh 8001")
-                     :started-check (str base-path "../venv/bin/python " base-path "started-check.py http://127.0.0.1:8001/README.md")
-                     :teardown (str base-path "teardown.sh 8001")}
+          command-1 {:setup (str scripts-path "setup.sh")
+                     :command (str scripts-path "command.sh 8001")
+                     :started-check (str python-path scripts-path "started-check.py http://127.0.0.1:8001/README.md")
+                     :teardown (str scripts-path "teardown.sh 8001")}
           backend-1 {:type "proxy" :payload {:remote-addr "127.0.0.1" :server-port "8001"}}  
           proxy1-req {:name proxy-name-1 :front-port front-port-1 :backend backend-1 :command command-1}
           post-resp (bodify (client/post "http://127.0.0.1:8080/proxy" {:body (generate-string proxy1-req)}))
@@ -199,10 +193,10 @@
           ;; build the second proxy name
           proxy-name-2 "test-proxy-2"
           front-port-2 8082
-          command-2 {:setup (str base-path "setup.sh")
-                     :command (str base-path "command.sh 8002")
-                     :started-check (str base-path "../venv/bin/python " base-path "started-check.py http://127.0.0.1:8002/README.md")
-                     :teardown (str base-path "teardown.sh 8002")}
+          command-2 {:setup (str scripts-path "setup.sh")
+                     :command (str scripts-path "command.sh 8002")
+                     :started-check (str python-path scripts-path "started-check.py http://127.0.0.1:8002/README.md")
+                     :teardown (str scripts-path "teardown.sh 8002")}
           backend-2 {:type "proxy" :payload {:remote-addr "127.0.0.1" :server-port "8002"}} 
           proxy2-req {:name proxy-name-2 :front-port front-port-2 :backend backend-2 :command command-2}
           post-resp (bodify (client/post "http://127.0.0.1:8080/proxy" {:body (generate-string proxy2-req)}))
@@ -218,15 +212,14 @@
   (testing "get-individual proxies"
     (let [api (build-api {:port 8080 :join? false})
           started-comp (component/start api)
-          base-path "/Users/underplank/projects/orochi/scripts/"
 
           ;; build the first proxy data
           proxy-name-1 "test-proxy-1"
           front-port-1 8081
-          command-1 {:setup (str base-path "setup.sh")
-                     :command (str base-path "command.sh 8001")
-                     :started-check (str base-path "../venv/bin/python " base-path "started-check.py http://127.0.0.1:8001/README.md")
-                     :teardown (str base-path "teardown.sh 8001")}
+          command-1 {:setup (str scripts-path "setup.sh")
+                     :command (str scripts-path "command.sh 8001")
+                     :started-check (str python-path scripts-path "started-check.py http://127.0.0.1:8001/README.md")
+                     :teardown (str scripts-path "teardown.sh 8001")}
           backend-1 {:type "proxy" "payload" {:remote-addr "127.0.0.1" :server-port "8001"}} 
           proxy1-req {:name proxy-name-1 :front-port front-port-1 :backend backend-1 :command command-1}
           post-resp (bodify (client/post "http://127.0.0.1:8080/proxy" {:body (generate-string proxy1-req)}))

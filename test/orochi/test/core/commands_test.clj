@@ -3,7 +3,7 @@
             [clojure.test :refer :all]
             [clj-commons-exec :as exec]
             [clojure.pprint :refer [pprint]]
-            [orochi.test.core.test-utils :refer :all]
+            [orochi.test.core.test-utils :refer [bodify scripts-path python-path substring?]]
             [com.stuartsierra.component :as component]))
 
 (def setup-output "Run setup\nfinished setup.sh\n")
@@ -11,11 +11,10 @@
 
 (deftest test-command
   (testing "run command success"
-    (let [base-path "/Users/underplank/projects/orochi/scripts/"
-          setup-com (str base-path "setup.sh")
-          com (str base-path "command.sh 8001")
-          started-com (str base-path "../venv/bin/python " base-path "started-check.py http://127.0.0.1:8001/README.md")
-          teardown-com (str base-path "teardown.sh 8001")
+    (let [setup-com (str scripts-path "setup.sh")
+          com (str scripts-path "command.sh 8001")
+          started-com (str python-path scripts-path "started-check.py http://127.0.0.1:8001/README.md")
+          teardown-com (str scripts-path "teardown.sh 8001")
           command (build-command setup-com com started-com teardown-com)
           start-com (component/start command)
           stop-com (component/stop start-com)]
@@ -32,12 +31,11 @@
       (is (= (.toString (get-in stop-com [:teardown-res :out])) ""))
       (is (= (.toString (get-in stop-com [:teardown-res :err])) ""))))
   (testing "run command success didnt start"
-    (let [base-path "/Users/underplank/projects/orochi/scripts/"
-          setup-com (str base-path "setup.sh")
-          com (str base-path "command.sh 8000")
+    (let [setup-com (str scripts-path "setup.sh")
+          com (str scripts-path "command.sh 8000")
           ;; The started-check command is using the wrong port on purpose
-          started-com (str base-path "../venv/bin/python " base-path "started-check.py http://127.0.0.1:8001/README.md")
-          teardown-com (str base-path "teardown.sh 8000")
+          started-com (str python-path scripts-path "started-check.py http://127.0.0.1:8001/README.md")
+          teardown-com (str scripts-path "teardown.sh 8000")
           command (build-command setup-com com started-com teardown-com)
           start-com (component/start command)
           stop-com (component/stop start-com)

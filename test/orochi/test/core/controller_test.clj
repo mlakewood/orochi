@@ -15,7 +15,7 @@
           started-controller (component/start controller)
           new-controller (add-proxy started-controller proxy-name backends frontend-port {})]
       (is (= (keys @(:proxies new-controller)) [proxy-name]))
-      (is (= @(get-in @(:proxies new-controller) [proxy-name :requests]) []))
+      (is (= @(get-in @(:proxies new-controller) [proxy-name :actions]) []))
       (is (= (get-in @(:proxies new-controller) [proxy-name :options]) {:port 8090, :join? false},))
       (is (= (get-in @(:proxies new-controller) [proxy-name :backend]) {:remote-addr "127.0.0.1", :server-port 5001}))
       (is (= @(get-in @(:proxies new-controller) [proxy-name :counter]) 0))
@@ -30,7 +30,7 @@
           new-controller (add-proxy started-controller proxy-name backends frontend-port {})
           proxy (get-proxy new-controller proxy-name)]
             (is (= (keys @(:proxies new-controller)) [proxy-name]))
-      (is (= @(get-in @(:proxies new-controller) [proxy-name :requests]) []))
+      (is (= @(get-in @(:proxies new-controller) [proxy-name :actions]) []))
       (is (= (get-in @(:proxies new-controller) [proxy-name :options]) {:port 8090, :join? false},))
       (is (= (get-in @(:proxies new-controller) [proxy-name :backend]) {:remote-addr "127.0.0.1", :server-port 5001}))
       (is (= @(get-in @(:proxies new-controller) [proxy-name :counter]) 0))
@@ -47,7 +47,7 @@
           new-controller (add-proxy started-controller proxy-name backends frontend-port {})
           st-prox-cont (stop-proxy new-controller proxy-name)
           ]
-      (is (= @(get-in @(:proxies st-prox-cont) [proxy-name :requests]) []))
+      (is (= @(get-in @(:proxies st-prox-cont) [proxy-name :actions]) []))
       (is (= (get-in @(:proxies st-prox-cont) [proxy-name :options]) nil))
       (is (= (get-in @(:proxies st-prox-cont) [proxy-name :backend]) {:remote-addr "127.0.0.1", :server-port 5001}))
       (is (= @(get-in @(:proxies st-prox-cont) [proxy-name :counter]) 0))
@@ -67,11 +67,11 @@
           new-controller (add-proxy started-controller proxy-name2 backends frontend-port2 {})
           st-prox-cont (stop-all-proxies new-controller)
           ]
-      (is (= @(get-in @(:proxies st-prox-cont) [proxy-name :requests]) []))
+      (is (= @(get-in @(:proxies st-prox-cont) [proxy-name :actions]) []))
       (is (= (get-in @(:proxies st-prox-cont) [proxy-name :options]) nil))
       (is (= (get-in @(:proxies st-prox-cont) [proxy-name :backend]) {:remote-addr "127.0.0.1", :server-port 5001}))
       (is (= @(get-in @(:proxies st-prox-cont) [proxy-name :counter]) 0))
-      (is (= @(get-in @(:proxies st-prox-cont) [proxy-name2 :requests]) []))
+      (is (= @(get-in @(:proxies st-prox-cont) [proxy-name2 :actions]) []))
       (is (= (get-in @(:proxies st-prox-cont) [proxy-name2 :options]) nil))
       (is (= (get-in @(:proxies st-prox-cont) [proxy-name2 :backend]) {:remote-addr "127.0.0.1", :server-port 5001}))
       (is (= @(get-in @(:proxies st-prox-cont) [proxy-name2 :counter]) 0))

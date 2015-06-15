@@ -9,102 +9,107 @@
             [orochi.core.controller :refer [build-controller]]
             [clojure.pprint :refer [pprint]]))
 
-(def result [{:count 1,
-    :incoming
-    {:ssl-client-cert nil,
-     :remote-addr "127.0.0.1",
-     :params {:* "foo/bar"},
-     :route-params {:* "foo/bar"},
-     :headers
-     {"host" "127.0.0.1:8089",
-      "user-agent" "Apache-HttpClient/4.3.5 (java 1.5)",
-      "accept-encoding" "gzip, deflate",
-      "connection" "close"},
-     :server-port 8089,
-     :content-length nil,
-     :content-type nil,
-     :character-encoding nil,
-     :uri "/foo/bar",
-     :server-name "127.0.0.1",
-     :query-string nil,
-     :scheme :http,
-     :request-method :get},
-    :mod
-    {:ssl-client-cert nil,
-     :remote-addr "127.0.0.1",
-     :params {:* "foo/bar"},
-     :route-params {:* "foo/bar"},
-     :headers
-     {"host" "127.0.0.1:8089",
-      "user-agent" "Apache-HttpClient/4.3.5 (java 1.5)",
-      "accept-encoding" "gzip, deflate",
-      "connection" "close"},
-     :server-port 5001,
-     :content-length nil,
-     :content-type nil,
-     :character-encoding nil,
-     :uri "/foo/bar",
-     :server-name "127.0.0.1",
-     :query-string nil,
-     :scheme :http,
-     :request-method :get},
-    :response
-    {:orig-content-encoding nil,
-     :trace-redirects [],
-     :status 200,
-     :headers
-     {"Server" "Jetty(7.6.13.v20130916)",
-      "Connection" "close",
-      "Content-Type" "application/json; charset=utf-8",},
-     :body "{\"status\":\"tested\"}"}}
-   {:count 2,
-    :incoming
-    {:ssl-client-cert nil,
-     :remote-addr "127.0.0.1",
-     :params {:* "foo/bar"},
-     :route-params {:* "foo/bar"},
-     :headers
-     {"host" "127.0.0.1:8089",
-      "user-agent" "Apache-HttpClient/4.3.5 (java 1.5)",
-      "accept-encoding" "gzip, deflate",
-      "connection" "close"},
-     :server-port 8089,
-     :content-length nil,
-     :content-type nil,
-     :character-encoding nil,
-     :uri "/foo/bar",
-     :server-name "127.0.0.1",
-     :query-string nil,
-     :scheme :http,
-     :request-method :get},
-    :mod
-    {:ssl-client-cert nil,
-     :remote-addr "127.0.0.1",
-     :params {:* "foo/bar"},
-     :route-params {:* "foo/bar"},
-     :headers
-     {"host" "127.0.0.1:8089",
-      "user-agent" "Apache-HttpClient/4.3.5 (java 1.5)",
-      "accept-encoding" "gzip, deflate",
-      "connection" "close"},
-     :server-port 5001,
-     :content-length nil,
-     :content-type nil,
-     :character-encoding nil,
-     :uri "/foo/bar",
-     :server-name "127.0.0.1",
-     :query-string nil,
-     :scheme :http,
-     :request-method :get},
-    :response
-    {:orig-content-encoding nil,
-     :trace-redirects [],
-     :status 200,
-     :headers
-     {"Server" "Jetty(7.6.13.v20130916)",
-      "Connection" "close",
-      "Content-Type" "application/json; charset=utf-8",},
-     :body "{\"status\":\"tested\"}"}}])
+(def test [{:ssl-client-cert nil,
+  :remote-addr "127.0.0.1",
+  :params {:* "foo/bar"},
+  :type :incoming,
+  :route-params {:* "foo/bar"},
+  :server-port 8089,
+  :content-length nil,
+  :count 1,
+  :content-type nil,
+  :headers {"accept-encoding" "gzip, deflate",
+               "connection" "close",
+               "user-agent" "Apache-HttpClient/4.3.5 (java 1.5)",
+               "host" "127.0.0.1:8089"},
+  :character-encoding nil,
+  :uri "/foo/bar",
+  :server-name "127.0.0.1",
+  :query-string nil,
+  :scheme :http,
+  :request-method :get}
+ {:ssl-client-cert nil,
+  :remote-addr "127.0.0.1",
+  :params {:* "foo/bar"},
+  :type :mod,
+  :route-params {:* "foo/bar"},
+  :server-port 5001,
+  :content-length nil,
+  :count 2,
+  :content-type nil,
+  :headers {"accept-encoding" "gzip, deflate",
+               "connection" "close",
+               "user-agent" "Apache-HttpClient/4.3.5 (java 1.5)",
+               "host" "127.0.0.1:8089"},
+  :throw-exceptions false,
+  :character-encoding nil,
+  :uri "/foo/bar",
+  :server-name "127.0.0.1",
+  :query-string nil,
+  :scheme :http,
+  :request-method :get}
+ {:count 3,
+  :type :response,
+  :orig-content-encoding nil,
+  :trace-redirects [],
+  :status 200,
+:headers
+              {"Server" "Jetty(7.6.13.v20130916)",
+               "Connection" "close",
+               "Content-Type" "application/json; charset=utf-8"}
+  :body "{\"status\":\"tested\"}"
+  }
+ {:ssl-client-cert nil,
+  :remote-addr "127.0.0.1",
+  :params {:* "foo/bar"},
+  :type :incoming,
+  :route-params {:* "foo/bar"},
+  :server-port 8089,
+  :content-length nil,
+  :count 4,
+  :headers {"accept-encoding" "gzip, deflate",
+               "connection" "close",
+               "user-agent" "Apache-HttpClient/4.3.5 (java 1.5)",
+               "host" "127.0.0.1:8089"},
+  :content-type nil,
+  :character-encoding nil,
+  :uri "/foo/bar",
+  :server-name "127.0.0.1",
+  :query-string nil,
+  :scheme :http,
+  :request-method :get}
+ {:ssl-client-cert nil,
+  :remote-addr "127.0.0.1",
+  :params {:* "foo/bar"},
+  :type :mod,
+  :route-params {:* "foo/bar"},
+  :server-port 5001,
+  :content-length nil,
+  :count 5,
+  :content-type nil,
+  :throw-exceptions false,
+  :character-encoding nil,
+  :uri "/foo/bar",
+  :server-name "127.0.0.1",
+  :query-string nil,
+  :scheme :http,
+  :headers {"accept-encoding" "gzip, deflate",
+               "connection" "close",
+               "user-agent" "Apache-HttpClient/4.3.5 (java 1.5)",
+               "host" "127.0.0.1:8089"},
+  :request-method :get}
+ {:count 6,
+  :type :response,
+  :orig-content-encoding nil,
+  :trace-redirects [],
+  :status 200,
+  :headers
+              {"Server" "Jetty(7.6.13.v20130916)",
+               "Connection" "close",
+               "Content-Type" "application/json; charset=utf-8"},
+   :body "{\"status\":\"tested\"}"
+  }])
+
 
 
 (def reg (atom {}))
@@ -124,10 +129,10 @@
             _ (swap! reg assoc :proxy started-proxy)
             res1 (bodify (client/get (str "http://127.0.0.1:" frontend-port "/foo/bar")))
             res2 (bodify (client/get (str "http://127.0.0.1:" frontend-port "/foo/bar")))
-            request-list (:requests started-proxy)
-            req (map clean-request-list @request-list)]
+            request-list @(:actions started-proxy)
+            req (map clean-request-list request-list)]
         (is (= res1 {"status" "tested"}))
-        (is (= result req)))
+        (is (= test req)))
       (finally
         (.stop (:backend @reg))
         (component/stop (:proxy @reg))

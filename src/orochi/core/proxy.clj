@@ -8,6 +8,7 @@
             [clojure.pprint :refer [pprint]]
             [orochi.proxies.pass-through-proxy :refer [proxy-request]]
             [orochi.proxies.web-hook :refer [web-hook]]
+            [orochi.proxies.mock-proxy :refer [mock-request]]
             [com.duelinmarkers.ring-request-logging :refer [wrap-request-logging]]))
 
 (defmulti handler (fn [comp request] (:type (:backend comp))))
@@ -17,6 +18,9 @@
 
 (defmethod handler "web-hook" [component request]
   (web-hook component request))
+
+(defmethod handler "mock-request" [component request]
+  (mock-request component request))
 
 (defmethod handler :default [componet request]
  (throw (IllegalArgumentException. 
@@ -37,9 +41,9 @@
     body))
 
 
-(defn serialize-requests [requests]
-  (if (seq requests)
-    (let [req (update-in requests [:incoming :body] #(fetch-body %1))
+(defn serialize-actions [actions]
+  (if (seq actions)
+    (let [req (update-in actions [:incoming :body] #(fetch-body %1))
           req (update-in req [:mod :body] #(fetch-body %1))
           req (update-in req [:response :body] #(fetch-body %1))]      
       req)
@@ -48,7 +52,7 @@
 (defn get-app [component]
   (routes (app-routes component)))
 
-(defrecord Proxy [name requests backend options counter]
+(defrecord Proxy [name actions backend options counter]
   ;; Implement the Lifecycle protocol
   component/Lifecycle
 
@@ -82,16 +86,16 @@
       comp))
   serializer/Serialize
   (->json [this]
-    (let [result {:requests (map serialize-requests @(:requests this)) 
+    (let [result {:actions (map serialize-actions @(:actions this)) 
                   :name (:name this)
                   :backend (:backend this)
                   :options (:options this)
                   :command (serializer/->json (:command this))}]
       result)))
 
-(defn build-proxy [name requests backend port controller command]
+(defn build-proxy [name actions backend port controller command]
   (map->Proxy {:name name
-               :requests requests
+               :actions actions
                :backend backend
                :options {:port port :join? false}
                :counter (:request-counter controller)

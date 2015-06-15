@@ -32,9 +32,8 @@
         backends (:backend body)
         port (:front-port body)
         command (:command body)
-        new-com (value->command command)
-        _ (swap! (:controller component) assoc :cont (add-proxy (:cont @(:controller component)) name backends port new-com))
-        ])
+        new-com (value->command command)]
+    (swap! (:controller component) assoc :cont (add-proxy (:cont @(:controller component)) name backends port new-com)))
   {:body (:body request)})
 
 
