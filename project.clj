@@ -1,4 +1,4 @@
-(defproject orochi "0.1.0-SNAPSHOT"
+(defproject orochi "0.1.1-SNAPSHOT"
   :description "An integration test framework for http services"
   :url "https://github.com/mlakewood/orochi"
   :min-lein-version "2.0.0"
