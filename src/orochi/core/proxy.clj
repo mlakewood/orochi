@@ -32,22 +32,22 @@
    (ANY "/*" [:as req] (handler component req))
    (route/not-found "Resource not found")))
 
-(defn fetch-body [body]
-  (if (instance? org.eclipse.jetty.server.HttpInput body)
-    (try
-      (slurp body)
-      ;; TODO Why could this have an Exception?
-      (catch java.io.IOException e ""))
-    body))
+(defn clean-body [action]
+  (println "in clean-body")
+  (let [body (if (instance? org.eclipse.jetty.server.HttpInput (:body action))
+               (try
+                 (slurp (:body action))
+                 ;; TODO Why could this have an Exception?
+                 (catch java.io.IOException e ""))
+               (:body action))]
+    (pprint action)
+    (assoc action :body body)))
 
 
 (defn serialize-actions [actions]
-  (if (seq actions)
-    (let [req (update-in actions [:incoming :body] #(fetch-body %1))
-          req (update-in req [:mod :body] #(fetch-body %1))
-          req (update-in req [:response :body] #(fetch-body %1))]      
-      req)
-    []))
+  (let [req (clean-body actions)]      
+    (pprint req)
+    req))
 
 (defn get-app [component]
   (routes (app-routes component)))

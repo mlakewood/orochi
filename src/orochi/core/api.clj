@@ -46,7 +46,7 @@
         proxy (get proxies proxy-id)
         proxy-result (if (nil? proxy)
                        {:status 404 :body {:error (str "Proxy " proxy-id " does not exist")}}
-                       {:body (serializer/->json (assoc proxy :name proxy-id))})]
+                       {:status 200 :body (serializer/->json (assoc proxy :name proxy-id))})]
     proxy-result))
 
 (defn delete-proxy [request proxy-id component]

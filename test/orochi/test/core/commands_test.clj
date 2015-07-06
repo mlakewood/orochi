@@ -51,7 +51,7 @@
       (is (= (.toString (get-in start-com [:started-res :out])) "got exception\ngot exception\ngot exception\ngot exception\nwe got badness\n"))
       (is (= (.toString (get-in start-com [:started-res :err])) ""))
       (is (= (.toString (get-in stop-com [:teardown-res :out])) ""))
-      (is (= (.toString (get-in stop-com [:teardown-res :err])) ""))
+      (is (not (= (.toString (get-in stop-com [:teardown-res :err])) "")))
       ))
   )
 
