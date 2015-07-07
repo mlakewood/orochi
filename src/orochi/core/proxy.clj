@@ -1,6 +1,7 @@
 (ns orochi.core.proxy
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
+            [clojure.walk :refer [keywordize-keys]]
             [ring.adapter.jetty :as jetty]
             [clj-http.client :as client]
             [com.stuartsierra.component :as component]
@@ -33,24 +34,30 @@
    (route/not-found "Resource not found")))
 
 (defn clean-body [action]
-  (println "in clean-body")
   (let [body (if (instance? org.eclipse.jetty.server.HttpInput (:body action))
                (try
                  (slurp (:body action))
                  ;; TODO Why could this have an Exception?
                  (catch java.io.IOException e ""))
                (:body action))]
-    (pprint action)
     (assoc action :body body)))
 
 
 (defn serialize-actions [actions]
   (let [req (clean-body actions)]      
-    (pprint req)
     req))
 
 (defn get-app [component]
   (routes (app-routes component)))
+
+(defn clean-backend [backend]
+  (let [clean-backend (keywordize-keys backend)
+        
+        clean-backend  (if (= (:type clean-backend) "web-hook")
+                         (update-in clean-backend [:payload :request :method] #(keyword %1))
+                         clean-backend)]
+    clean-backend))
+
 
 (defrecord Proxy [name actions backend options counter]
   ;; Implement the Lifecycle protocol
@@ -62,13 +69,16 @@
     ;; and start it running. For example, connect to a
     ;; database, create thread pools, or initialize shared
     ;; state.
-    (let [backend (:backend comp)
+    (let [backend (clean-backend (:backend comp))
           options (merge {:port (:port comp)} (:options comp))
-          app (app-routes comp)
-          srv (jetty/run-jetty app options)
-          started-command (component/start (:command comp))
+          started-command (if (not (nil? (get-in comp [:command :command]))) 
+                            (component/start (:command comp))
+                            {})
+          comp (assoc comp :backend backend)
           comp (assoc comp :command started-command)
           comp (assoc comp :options options)
+          app (app-routes comp)
+          srv (jetty/run-jetty app options)
           comp (assoc comp :srv srv)]
       comp))
 
@@ -90,7 +100,9 @@
                   :name (:name this)
                   :backend (:backend this)
                   :options (:options this)
-                  :command (serializer/->json (:command this))}]
+                  :command (if (not (= (:command this) {}))
+                              (serializer/->json (:command this))
+                              {})}]
       result)))
 
 (defn build-proxy [name actions backend port controller command]

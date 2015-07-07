@@ -20,16 +20,17 @@
     (Thread/sleep delay)
     response))
 
-
 (defn web-hook [component request]
-  (let [hook (get-in component [:backend :payload :request])
+  (let [hook (get-in component [:backend :payload :request]) 
         timing (get-in component [:backend :payload :request-time :timing])
         delay (get-in component [:backend :payload :request-time :delay] 0)
         canned-response (get-in component [:backend :payload :response])
-        response (if (= timing  :during)
+        
+        response (if (= timing "during")
                    (request-block hook delay component request)
                    (future (request-async hook delay component request canned-response)))]
-    (if (and (= canned-response :return-response) (= timing :during))
+    (if (and (= canned-response :return-response) (= timing "during"))
       response
-      canned-response)))
+      (let [_ (append-action component canned-response :canned-response)]
+        canned-response))))
 

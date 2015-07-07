@@ -13,6 +13,7 @@
 
 (defn add-proxy [controller name backends port command]
   (let [proxy (build-proxy name (atom []) backends port controller command)
+        _ (pprint proxy)
         proxy (component/start proxy)
         _ (swap! (:proxies controller) assoc name proxy)
         ]
